@@ -56,7 +56,7 @@
     });
   };
 
-  function Cookie() {
+  $.fn.trackable.cookie = function() {
     this.create = function(name, value, minutes) {
       var expires;
       if (minutes) {
@@ -101,7 +101,7 @@
     };
   }
 
-  function Platform() {
+  $.fn.trackable.platform = function() {
     var unknown = 'Unknown';
 
     // screen
@@ -275,11 +275,10 @@
     }
   }
 
-  $.fn.trackable.platform = new Platform();
+  var platform = $.fn.trackable.platform.call();
+  var cookie = new $.fn.trackable.cookie();
 
-  $.fn.trackable.cookie = new Cookie();
-
-  $.fn.trackable.defaults = {
+    $.fn.trackable.defaults = {
     url: '/track',
     method: 'POST',
     args: {},
@@ -287,20 +286,20 @@
       type: 'view',
       object: 'page',
       id: 'none',
-      cookie: $.fn.trackable.cookie.read('_fa_id'),
+      cookie: cookie.read('_fa_id'),
       user: null,
-      session: $.fn.trackable.cookie.read('_fa_session'),
+      session: cookie.read('_fa_session'),
       time: (new Date()),
       ip: '127.0.0.1',
       referrer: document.referrer,
       resourcetype: 'None',
       resourceid: 0,
       currenturl: window.location.pathname + window.location.search + window.location.hash,
-      mobile: $.fn.trackable.platform.mobile,
-      os: $.fn.trackable.platform.os,
-      browser: $.fn.trackable.platform.browser,
-      screensize: $.fn.trackable.platform.screen,
-      iscookieenabled: $.fn.trackable.platform.cookies
+      mobile: platform.mobile,
+      os: platform.os,
+      browser: platform.browser,
+      screensize: platform.screen,
+      iscookieenabled: platform.cookies
     },
     callbacks: {
       success: function() {},
@@ -309,3 +308,18 @@
   }
 
 }( jQuery ));
+
+// $(document).on('turbolinks:load', function () {
+//   $('[data-trackable]').trackable({
+//     url: '/track-user-action',
+//     action: {
+//       user:  $('#flender_traker').data('user'),
+//       referrer: $('#flender_traker').data('referrer'),
+//       ip: $('#flender_traker').data('ip'),
+//     },
+//     callbacks: {
+//       success: function(data) {
+//       }
+//     }
+//   });
+// });
