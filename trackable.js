@@ -1,11 +1,8 @@
 (function ( $ ) {
 
-  $.fn.trackable = function( options ) {
-    // This is the easiest way to have default options.
+
+  $.track = function(options) {
     var settings = $.extend(true, {}, $.fn.trackable.defaults, options);
-
-    var actions = ['click', 'keypress', 'submit', 'load', 'dblclick', 'keydown', 'change', 'resize', 'mouseenter', 'keyup', 'focus', 'scroll', 'mouseleave', 'blur', 'unload'];
-
     var onSuccess = settings.callbacks.success;
     var onError   = settings.callbacks.error;
 
@@ -25,6 +22,11 @@
         }
       })
     };
+    submit(settings);
+  }
+
+  $.fn.trackable = function( options ) {
+    var actions = ['click', 'keypress', 'submit', 'load', 'dblclick', 'keydown', 'change', 'resize', 'mouseenter', 'keyup', 'focus', 'scroll', 'mouseleave', 'blur', 'unload'];
 
     return this.each(function() {
       var element = $(this);
@@ -45,7 +47,7 @@
       });
       if (data.when != undefined && data.when.length > 0 && $.inArray(data.when.toString(), actions) != -1) {
         $(element).on(data.when.toString(), function(e) {
-          submit($.extend(true, {}, settings, data));
+          $.track($.extend(true, {}, options, data));
         });
         if (data.when == 'load') {
           $(element).trigger(data.when.toString());
@@ -278,7 +280,7 @@
   var platform = $.fn.trackable.platform.call();
   var cookie = new $.fn.trackable.cookie();
 
-    $.fn.trackable.defaults = {
+  $.fn.trackable.defaults = {
     url: '/track',
     method: 'POST',
     args: {},
@@ -311,11 +313,11 @@
 
 // $(document).on('turbolinks:load', function () {
 //   $('[data-trackable]').trackable({
-//     url: '/track-user-action',
+//     url: '/track-actions',
 //     action: {
-//       user:  $('#flender_traker').data('user'),
-//       referrer: $('#flender_traker').data('referrer'),
-//       ip: $('#flender_traker').data('ip'),
+//       user:  $('#data').data('user'),
+//       referrer: $('#data').data('referrer'),
+//       ip: $('#data').data('ip'),
 //     },
 //     callbacks: {
 //       success: function(data) {
